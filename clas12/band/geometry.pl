@@ -8,8 +8,8 @@ my $NUM_LAYERS = 6;
 my $NUM_BARS   = 18;
 my $NUM_SHDS   = 3;
 
-my $band_xpos  = 0;
-my $band_ypos  = 900;
+my $band_xpos  = 0; 
+my $band_ypos  = 921.2;
 my $band_zpos  = 655;
 
 my $bcolor = 'aaaaaa';
@@ -21,10 +21,15 @@ my $vframe_y  = 1541.33; # mm
 my $vframe_z  = 6;       # inches
 my @vframe    = ($vframe_x/2, $vframe_y/2, $vframe_z/2);
 my @vinframe  = ($vframe_x/2-0.25, $vframe_y/2, $vframe_z/2-0.25);
-my @vframepos = ($band_xpos - 1078.9, $band_xpos - 448.3, $band_xpos + 448.3, $band_xpos + 1078.9);
-my $align_x = 0;               # mm
+my @vframepos = ($band_xpos - 1078.9, $band_xpos - 486.4, $band_xpos + 486.4, $band_xpos + 1078.9);
+my $align_x = 2;               # mm
 my $align_y = 0;               # mm
 my $align_z = -2308.71;        # mm
+
+# These are delta z between each layer:
+# (79.4, 76.2, 79.4, 76.2, 73.0)
+# But we want the cumulative delta z:
+my @delta_z = (0.0, 79.4, 155.6, 235.0, 311.2, 384.2);
 
 my $STARTcart = -462.3;
 
@@ -63,8 +68,9 @@ sub build_scintillators
 			my $y      = $band_ypos;
 			my $z      = $band_zpos;
 			my $xpos = $x;
-			my $ypos = $y - 73.03*($i-1);
-			my $zpos = $z - 76.75*($j-1);
+			my $ypos = $y - 73.0*($i-1);
+			#my $zpos = $z - 76.75*($j-1);
+			my $zpos = $z - $delta_z[$j-1];
 			my $xdim = $lbar_length/2;
 			my $ydim = 36;
 			my $zdim = 36;
@@ -164,8 +170,6 @@ sub build_scintillators
 				if($j==$NUM_LAYERS && $i>=16) {$zpos = $zpos + 72;}
 				# Short Bars
 				my $xpo = "753.5";
-				my $ypo = 200 - 72*$i;
-				my $zpo = $z + 72*($j-1);
 				$sector = 4;
 				$component = $i-10;;
 				my %detector3 = init_det();
